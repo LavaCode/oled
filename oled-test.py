@@ -43,3 +43,5 @@ draw.text((x, y), text, font=font, fill=255)
 
 oled.image(image)
 oled.show()
+
+##############################################################
