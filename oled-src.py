@@ -21,7 +21,7 @@ import netifaces
 from adafruit_ssd1306 import SSD1306_I2C
 from PIL import Image, ImageDraw, ImageFont
 
-i2c = busio.I2C(board.SDA, board.SCL)
+i2c = busio.I2C(board.SCL, board.SDA)
 
 #Set OLED address
 oled = SSD1306_I2C(128, 64, i2c, addr=0x3d)
