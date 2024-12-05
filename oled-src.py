@@ -44,7 +44,7 @@ label_font = ImageFont.truetype(font_path, label_font_size)
 
 def get_ip_address(intf):
     try:
-        ip_address = netifaces.ifaddresses(intf)[netifaces.AF_INET][0]
+        ip_address = netifaces.ifaddresses(intf)[netifaces.AF_INET][0]['addr']
         print(f"Device IP address of {intf} is: {ip_address}")
         return ip_address
     except KeyError:
