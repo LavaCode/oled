@@ -17,6 +17,7 @@ import threading
 import json
 import time
 import socket
+import netifaces
 from adafruit_ssd1306 import SSD1306_I2C
 from PIL import Image, ImageDraw, ImageFont
 
@@ -29,14 +30,26 @@ image = Image.new("1", (oled.width, oled.height))
 draw = ImageDraw.Draw(image) 
 draw.rectangle((0, 0, oled.width, oled.height), outline=255, fill=0)
 
-timer_font_size = 20
+timer_font_size = 40
+msg_font_size = 20
 label_font_size = 12
 font_path = "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf"
+font_timer_path = "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf"
 
-timer_font = ImageFont.truetype(font_path, timer_font_size)
+timer_font = ImageFont.truetype(font_timer_path, timer_font_size)
+msg_font = ImageFont.truetype(font_path, msg_font_size)
 label_font = ImageFont.truetype(font_path, label_font_size)
 
-udp_ip = "172.16.1.100"
+def get_ip_address(intf):
+    try:
+        ip_address = netifaces.ifaddresses(intf)[netifaces.AF_INET][0]
+        print(f"Device IP address of {intf} is: {ip_address}")
+        return ip_address
+    except KeyError:
+        print(f"No IP address found or seth for: {intf}")
+        return None
+
+udp_ip = get_ip_address('eth0')
 udp_port = 12345
 
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -52,20 +65,20 @@ while True:
 timer_running = False 
 remaining_time = 0 
 duration_file = "/home/galaxy/countdown_duration.json"
-countdown_duration = 20
+countdown_duration = 20  #Set a default duration
 default_message = "Waiting..."
 
 def show_fullscreen_message(msg): 
     background = Image.new('1', (128, 64), 'black')
     draw = ImageDraw.Draw(background)
     
-    text_bbox = draw.textbbox((0, 0), msg, font=timer_font)
+    text_bbox = draw.textbbox((0, 0), msg, font=msg_font)
     text_width = text_bbox[2] - text_bbox[0]
     start_position = 0
     text_height = text_bbox[3] - text_bbox[1]
     x = (oled.width - text_width) // 2
     y = (oled.height - text_height) // 2
-    draw.text((x, y), msg, font=timer_font, fill=255)
+    draw.text((x, y), msg, font=msg_font, fill=255)
     
     oled.image(background)
     oled.show()
@@ -99,7 +112,7 @@ def update_display(minutes, seconds):
     label_bbox = draw.textbbox((0, 0), label_text, font=label_font)
     label_width = label_bbox[2] - label_bbox[0]
     label_height = label_bbox[3] - label_bbox[1]
-    label_position = ((64 - label_width) // 2, 5)
+    label_position = ((128 - label_width) // 2, 5)
     draw.text(label_position, label_text, font=label_font, fill=255)
 
     #Timer positioning
