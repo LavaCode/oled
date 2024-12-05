@@ -22,6 +22,8 @@ from adafruit_ssd1306 import SSD1306_I2C
 from PIL import Image, ImageDraw, ImageFont
 
 i2c = busio.I2C(board.SDA, board.SCL)
+
+#Set OLED address
 oled = SSD1306_I2C(128, 64, i2c, addr=0x3d)
 oled.fill(0)
 oled.show()
@@ -49,7 +51,10 @@ def get_ip_address(intf):
         print(f"No IP address found or seth for: {intf}")
         return None
 
+#Set network interface
 udp_ip = get_ip_address('eth0')
+
+#Set desired UDP listening port#
 udp_port = 12345
 
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
