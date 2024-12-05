@@ -74,7 +74,6 @@ def show_fullscreen_message(msg):
     
     text_bbox = draw.textbbox((0, 0), msg, font=msg_font)
     text_width = text_bbox[2] - text_bbox[0]
-    start_position = 0
     text_height = text_bbox[3] - text_bbox[1]
     x = (oled.width - text_width) // 2
     y = (oled.height - text_height) // 2
@@ -165,10 +164,10 @@ def handle_udp_commands():
                     print(f"Countdown duration updated to {new_duration} seconds")
                 else:
                     sock.sendto(f"DUR!INV!".encode("utf-8"), addr)
-                    print("Invalid value received!")
+                    print("Invalid value received! Duration is invalid")
             except: 
                 sock.sendto(f"DUR!INV!".encode("utf-8"), addr)
-                print("Invalid value received!")
+                print("Invalid value received! Data packet is invalid")
         else: 
             print("Timer is not running!")
 
